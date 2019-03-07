@@ -1,5 +1,5 @@
 
-function ground()
+function ground(gl)
 {
   const positions = [
     // Front
@@ -56,35 +56,93 @@ function ground()
     32, 33, 34, 32, 34, 35,
   ];
 
-  // Now set up the colors for the faces. We'll use solid colors
-  // for each face.
+  const vertexNormals = [
+    // Front
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
 
-  const faceColors = [
-    [0.80, 0.51, 0.24, 1.0],
-    [0.80, 0.51, 0.24, 1.0],
-    [0.80, 0.51, 0.24, 1.0],
-    [0.80, 0.51, 0.24, 1.0],
-    [0.80, 0.51, 0.24, 1.0],
-    [0.80, 0.51, 0.24, 1.0]
+    // Right
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+
+    // Back
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+
+    // Left
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+
+    // Top
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+
+    // Bottom
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
   ];
 
-  // Convert the array of colors into a table for all the vertices.
+  const textureCoordinates = [
+    // Front
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
 
-  var colors = [];
+    // Right
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
 
-  for (var j = 0; j < faceColors.length; ++j) {
-    const c = faceColors[j];
+    // Back
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
 
-    // Repeat each color four times for the four vertices of the face
-    colors = colors.concat(c, c, c, c);
-  }
+    // Left
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+
+    // Top
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+
+    // Bottom
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+  ];
+
+  const texture = loadTexture(gl, 'assets/gr2.png');
 
   return {
 		'indices' : indices,
 		'vertexCount' : 36,
 		'positions' : positions,
-    'colors' : colors,
+    'vertexNormals' : vertexNormals,
+    'textureCoordinates' : textureCoordinates,
+    'texture' : texture,
 		'rotation'  : 0.05,
-		'translate' : [0, -2, -3],
+		'translate' : [0.0, 0, 0],
+    'type' : "mono",
 	}
 }

@@ -1,21 +1,18 @@
 function create_camera(){
-	var numFs = 5;
+
 	var radius = 1;
-	var target = [0, 0, -100];
+	var target = [0, 0, -1000];
 
 	// Use matrix math to compute a position on a circle where
 	// the camera is
 
 	var cameraMatrix = mat4.create();
+
 	mat4.rotate(cameraMatrix,  // destination matrix
 			cameraMatrix,  // matrix to rotate
-			degToRad(cameraAngleDegHoriz),     // amount to rotate in radians
-			[0, 1, 0]);
-	mat4.rotate(cameraMatrix,  // destination matrix
-			cameraMatrix,  // matrix to rotate
-			degToRad(-60),     // amount to rotate in radians
-			[1, 0, 0]);
-	mat4.translate(cameraMatrix, cameraMatrix, [0, -1.5, 0]);
+			degToRad(0),     // amount to rotate in radians
+			[0, 0, 1]);
+	mat4.translate(cameraMatrix, cameraMatrix, [0, 1, 0]);
 
 	// Get the camera's postion from the matrix we computed
 	var cameraPosition = [
@@ -24,7 +21,7 @@ function create_camera(){
 		cameraMatrix[14],
 	];
 
-		var up = [0, 1, 0];
+	var up = [0, 1, 0];
 
 		// Compute the camera's matrix using look at.
 		cameraMatrix = lookAt(cameraPosition, target, up);

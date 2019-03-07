@@ -1,38 +1,36 @@
-
-function wall()
-{
+function wall(gl, z_dist, scale, side) {
   // Now create an array of positions for the cube.
 
   const positions = [
     // Front
-    -5.0, 10.0, 6.0,
+    -5.0, 10.0 * scale, 6.0,
     -5.0, -10.0, 6.0,
     5.0, -10.0, 6.0,
-    5.0, 10.0, 6.0,
+    5.0, 10.0 * scale, 6.0,
 
     //Right
     5.0, -10.0, 6.0,
-    5.0, 10.0, 6.0,
-    5.0, 10.0, -6.0,
+    5.0, 10.0 * scale, 6.0,
+    5.0, 10.0 * scale, -6.0,
     5.0, -10.0, -6.0,
 
     //Back
-    5.0, 10.0, -6.0,
+    5.0, 10.0 * scale, -6.0,
     5.0, -10.0, -6.0,
     -5.0, -10.0, -6.0,
-    -5.0, 10.0, -6.0,
+    -5.0, 10.0 * scale, -6.0,
 
     //Left
     -5.0, -10.0, -6.0,
-    -5.0, 10.0, -6.0,
-    -5.0, 10.0, 6.0,
+    -5.0, 10.0 * scale, -6.0,
+    -5.0, 10.0 * scale, 6.0,
     -5.0, -10.0, 6.0,
 
     //Top
-    -5.0, 10.0, 6.0,
-    5.0, 10.0, 6.0,
-    5.0, 10.0, -6.0,
-    -5.0, 10.0, -6.0,
+    -5.0, 10.0 * scale, 6.0,
+    5.0, 10.0 * scale, 6.0,
+    5.0, 10.0 * scale, -6.0,
+    -5.0, 10.0 * scale, -6.0,
 
     //Bottom
     -5.0, -10.0, 6.0,
@@ -58,35 +56,110 @@ function wall()
     32, 33, 34, 32, 34, 35,
   ];
 
-  // Now set up the colors for the faces. We'll use solid colors
-  // for each face.
+  const vertexNormals = [
+    // Right
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
+    1.0, 0.0, 0.0,
 
-  const faceColors = [
-    [0.48, 0.03, 0.007, 1.0],
-    [0.48, 0.03, 0.007, 1.0],
-    [0.48, 0.03, 0.007, 1.0],
-    [0.48, 0.03, 0.007, 1.0],
-    [0.48, 0.03, 0.007, 1.0],
-    [0.48, 0.03, 0.007, 1.0],
+    // Left
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    -1.0, 0.0, 0.0,
+    // Top
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0,
+
+    // Bottom
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    // Front
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+
+    // Back
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
   ];
 
-  // Convert the array of colors into a table for all the vertices.
+  const textureCoordinates = [
+    // Front
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+    // Back
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+    // Top
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+    // Bottom
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+    // Right
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+    // Left
+    0.0,  0.0,
+    1.0,  0.0,
+    1.0,  1.0,
+    0.0,  1.0,
+  ];
 
-  var colors = [];
-
-  for (var j = 0; j < faceColors.length; ++j) {
-    const c = faceColors[j];
-
-    // Repeat each color four times for the four vertices of the face
-    colors = colors.concat(c, c, c, c);
-  }
+  const texture = loadTexture(gl, 'assets/wall.jpg');
 
   return {
-		'indices' : indices,
-		'vertexCount' : 36,
-		'positions' : positions,
-    'colors' : colors,
-		'rotation'  : 0.05,
-		'translate' : [-17, 0, -55],
-	}
+    'indices': indices,
+    'vertexCount': 36,
+    'positions': positions,
+    'vertexNormals' : vertexNormals,
+    'textureCoordinates' : textureCoordinates,
+    'texture' : texture,
+    'rotation': 0.05,
+    'translate': [12 * side, 0, z_dist],
+    'initial_z': z_dist,
+    'type': "wall",
+    'side': side,
+  }
+}
+
+function wall_delete(gl, object) {
+
+  var index = walls.indexOf(object);
+  var r = getRandomFloat(0.8, 2.5);
+
+  walls[index] = wall(gl, -150, r, object.side);
+  buffer_objects[index + objects.length] = initBuffers(gl, walls[walls.length - 1]);
+}
+
+function wall_tick(gl, walls) {
+
+  for (var i = 0; i < walls.length; ++i) {
+
+    walls[i].translate[2] += 0.2;
+
+    if (walls[i].translate[2] > -4) {
+      wall_delete(gl, walls[i]);
+    }
+  }
+
 }
