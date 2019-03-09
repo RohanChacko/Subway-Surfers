@@ -1,4 +1,4 @@
-function clearScene(gl) {
+function clearScene(gl, translate) {
 
   gl.clearColor(0.52, 0.80, 0.97, 1.0); // Clear to black, fully opaque
   gl.clearDepth(1.0); // Clear everything
@@ -16,7 +16,7 @@ function clearScene(gl) {
   // and we only want to see objects between 0.1 units
   // and 100 units away from the camera.
 
-  const fieldOfView = 90 * Math.PI / 180; // in radians
+  const fieldOfView = 45 * Math.PI / 180; // in radians
   const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
   const zNear = 0.1;
   const zFar = 1000.0;
@@ -30,8 +30,8 @@ function clearScene(gl) {
     zNear,
     zFar);
 
-  var cameraMatrix = create_camera();
-  mat4.multiply(projectionMatrix, projectionMatrix, cameraMatrix);
+  // var cameraMatrix = create_camera(translate);
+  // mat4.multiply(projectionMatrix, projectionMatrix, cameraMatrix);
 
   return projectionMatrix;
 
@@ -42,7 +42,7 @@ function clearScene(gl) {
 //
 function drawScene(gl, programInfo, buffers, deltaTime, projectionMatrix, object, texture) {
 
-  // webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
   // Set the drawing position to the "identity" point, which is
   // the center of the scene.
   const modelViewMatrix = mat4.create();
@@ -59,7 +59,7 @@ function drawScene(gl, programInfo, buffers, deltaTime, projectionMatrix, object
     modelViewMatrix, // destination matrix
     modelViewMatrix, // matrix to translate
     object.rotation,
-    [1, 1, 1]); // axis to rotate around
+    [0, 1, 0]); // axis to rotate around
 
   const normalMatrix = mat4.create();
   mat4.invert(normalMatrix, modelViewMatrix);
@@ -157,7 +157,8 @@ function drawScene(gl, programInfo, buffers, deltaTime, projectionMatrix, object
 
     // Tell the shader we bound the texture to texture unit 0
     gl.uniform1i(programInfo.uniformLocations.texture0, 0);
-  
+
+    gl.uniform1i(programInfo.uniformLocations.gray, gray);
 
   {
     const type = gl.UNSIGNED_SHORT;

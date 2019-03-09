@@ -94,35 +94,40 @@ function wall(gl, z_dist, scale, side) {
 
   const textureCoordinates = [
     // Front
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+
     // Back
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+
     // Top
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+
     // Bottom
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+
     // Right
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+
     // Left
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
   ];
 
   const texture = loadTexture(gl, 'assets/wall.jpg');
@@ -131,11 +136,11 @@ function wall(gl, z_dist, scale, side) {
     'indices': indices,
     'vertexCount': 36,
     'positions': positions,
-    'vertexNormals' : vertexNormals,
-    'textureCoordinates' : textureCoordinates,
-    'texture' : texture,
-    'rotation': 0.05,
-    'translate': [12 * side, 0, z_dist],
+    'vertexNormals': vertexNormals,
+    'textureCoordinates': textureCoordinates,
+    'texture': texture,
+    'rotation': 0.00,
+    'translate': [13 * side, 0, z_dist],
     'initial_z': z_dist,
     'type': "wall",
     'side': side,
@@ -144,22 +149,43 @@ function wall(gl, z_dist, scale, side) {
 
 function wall_delete(gl, object) {
 
-  var index = walls.indexOf(object);
-  var r = getRandomFloat(0.8, 2.5);
+  var dist = 0;
+  var r = getRandomFloat(0.2, 0.8);
 
-  walls[index] = wall(gl, -150, r, object.side);
-  buffer_objects[index + objects.length] = initBuffers(gl, walls[walls.length - 1]);
+  if (object.side == -1) {
+    dist = walls_left[walls_left.length - 1].translate[2] - 14;
+    walls_left.shift();
+    walls_left.push(wall(gl, dist, r, object.side));
+    buffer_walls_left.shift();
+    buffer_walls_left.push(initBuffers(gl, walls_left[walls_left.length - 1]));
+  } else {
+    dist = walls_right[walls_right.length - 1].translate[2] - 14;
+    walls_right.shift();
+    walls_right.push(wall(gl, dist, r, object.side));
+    buffer_walls_right.shift();
+    buffer_walls_right.push(initBuffers(gl, walls_right[walls_right.length - 1]));
+  }
 }
 
-function wall_tick(gl, walls) {
+function wall_tick(gl, walls_left, walls_right) {
 
-  for (var i = 0; i < walls.length; ++i) {
+  for (var i = 0; i < walls_left.length; ++i) {
 
-    walls[i].translate[2] += 0.2;
+    walls_left[i].translate[2] += 0.2;
 
-    if (walls[i].translate[2] > -4) {
-      wall_delete(gl, walls[i]);
+    if (walls_left[i].translate[2] > -4) {
+      wall_delete(gl, walls_left[i]);
+      i--;
     }
   }
 
+  for (var i = 0; i < walls_right.length; ++i) {
+
+    walls_right[i].translate[2] += 0.2;
+
+    if (walls_right[i].translate[2] > -4) {
+      wall_delete(gl, walls_right[i]);
+      i--;
+    }
+  }
 }

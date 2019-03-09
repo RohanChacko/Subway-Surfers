@@ -1,4 +1,4 @@
-function create_camera(){
+function create_camera(translate){
 
 	var radius = 1;
 	var target = [0, 0, -1000];
@@ -18,7 +18,7 @@ function create_camera(){
 	var cameraPosition = [
 		cameraMatrix[12],
 		cameraMatrix[13],
-		cameraMatrix[14],
+		cameraMatrix[14]
 	];
 
 	var up = [0, 1, 0];

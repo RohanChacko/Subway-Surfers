@@ -1,4 +1,4 @@
-function player(gl) {
+function police(gl) {
   // Now create an array of positions for the cube.
 
   const positions = [
@@ -94,10 +94,11 @@ function player(gl) {
 
   const textureCoordinates = [
     // Front
-    0.0, 0.0,
+
     1.0, 0.0,
     1.0, 1.0,
     0.0, 1.0,
+    0.0, 0.0,
     // Back
     0.0, 0.0,
     1.0, 0.0,
@@ -124,7 +125,7 @@ function player(gl) {
     1.0, 1.0,
     0.0, 1.0,
   ];
-  const texture = loadTexture(gl, 'assets/player.png');
+  const texture = loadTexture(gl, 'assets/police.png');
   return {
     'indices': indices,
     'vertexCount': 36,
@@ -133,92 +134,18 @@ function player(gl) {
     'textureCoordinates': textureCoordinates,
     'texture': texture,
     'rotation': 0.00,
-    'translate': [0.0, -0.70, -3.15],
-    'type': "mono",
-    'jump': 0,
-    'score': 0,
+    'translate': [0.0, -0.70, -2.15],
+    'type': "police",
     'speed_y': 0.1,
   }
 }
 
 
-function player_tick(object, obstacles) {
+function police_tick(object, player) {
 
-  var p_right = false;
-  var p_left = false;
-  if (statusKeys[37] || statusKeys[65]) {
-    // A or Left Key
+  object.translate[0] = player.translate[0];
 
-    p_left = true;
-    p_right = false;
-    statusKeys[37] = false;
-    statusKeys[65] = false;
-
+  if (object.translate[2] <= 2.0) {
+    object.translate[2] += 0.005;
   }
-  if (statusKeys[39] || statusKeys[68]) {
-    // D or Right Key
-
-    p_left = false;
-    p_right = true;
-    statusKeys[39] = false;
-    statusKeys[68] = false;
-  }
-
-  if (p_left == true) {
-    if (object.translate[0] == 0.0) {
-      object.translate[0] = -1.05;
-    } else if (object.translate[0] == 1.05) {
-      object.translate[0] = 0.0;
-    }
-  } else if (p_right == true) {
-    if (object.translate[0] == 0.0) {
-      object.translate[0] = 1.05;
-    } else if (object.translate[0] == -1.05) {
-      object.translate[0] = 0.0;
-    }
-  }
-
-  if (statusKeys[32]) {
-    // Space bar
-    object.jump = 1;
-  }
-
-  if (object.jump == 1) {
-
-    object.speed_y -= 0.005;
-
-    if (object.speed_y < 0) {
-      object.speed_y = 0.001;
-    }
-    object.translate[1] += object.speed_y;
-
-
-  }
-
-  for (let i = 0; i < obstacles.length; ++i) {
-
-
-    if (obstacles[i].translate[0] == object.translate[0] && obstacles[i].translate[2] + 1.55 > -3.15 && obstacles[i].translate[2] - 1.55 < -3.15) {
-      if (object.translate[1] < 0.05 && object.jump == 1) {
-        object.jump = 1;
-      } else {
-        object.jump = 0;
-      }
-      break;
-    } else if (object.translate[1] > 0.05) {
-      object.jump = -1;
-    }
-  }
-
-  if (object.jump == -1) {
-    object.speed_y += 0.008;
-    object.translate[1] -= object.speed_y;
-
-    if (object.translate[1] < -0.7) {
-      object.translate[1] = -0.7;
-      object.jump = 0;
-      object.speed_y = 0.1;
-    }
-  }
-
 }

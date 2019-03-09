@@ -1,41 +1,42 @@
-function obstacle(gl, track, z_dist) {
+function boost(gl, track, z_dist) {
+  // Now create an array of positions for the cube.
 
   const positions = [
     // Front
-    -0.20, 0.5, 0.75,
-    -0.20, -0.5, 0.75,
-    0.20, -0.5, 0.75,
-    0.20, 0.5, 0.75,
+    -0.1, 0.1, 0.1,
+    -0.1, -0.1, 0.1,
+    0.1, -0.1, 0.1,
+    0.1, 0.1, 0.1,
 
     //Right
-    0.20, -0.5, 0.75,
-    0.20, 0.5, 0.75,
-    0.20, 0.5, -0.75,
-    0.20, -0.5, -0.75,
+    0.1, -0.1, 0.1,
+    0.1, 0.1, 0.1,
+    0.1, 0.1, -0.1,
+    0.1, -0.1, -0.1,
 
     //Back
-    0.20, 0.5, -0.75,
-    0.20, -0.5, -0.75,
-    -0.20, -0.5, -0.75,
-    -0.20, 0.5, -0.75,
+    0.1, 0.1, -0.1,
+    0.1, -0.1, -0.1,
+    -0.1, -0.1, -0.1,
+    -0.1, 0.1, -0.1,
 
     //Left
-    -0.20, -0.5, -0.75,
-    -0.20, 0.5, -0.75,
-    -0.20, 0.5, 0.75,
-    -0.20, -0.5, 0.75,
+    -0.1, -0.1, -0.1,
+    -0.1, 0.1, -0.1,
+    -0.1, 0.1, 0.1,
+    -0.1, -0.1, 0.1,
 
     //Top
-    -0.20, 0.5, 0.75,
-    0.20, 0.5, 0.75,
-    0.20, 0.5, -0.75,
-    -0.20, 0.5, -0.75,
+    -0.1, 0.1, 0.1,
+    0.1, 0.1, 0.1,
+    0.1, 0.1, -0.1,
+    -0.1, 0.1, -0.1,
 
     //Bottom
-    -0.20, -0.5, 0.75,
-    0.20, -0.5, 0.75,
-    0.20, -0.5, -0.75,
-    -0.20, -0.5, -0.75,
+    -0.1, -0.1, 0.1,
+    0.1, -0.1, 0.1,
+    0.1, -0.1, -0.1,
+    -0.1, -0.1, -0.1,
   ];
 
 
@@ -56,31 +57,17 @@ function obstacle(gl, track, z_dist) {
   ];
 
   const vertexNormals = [
-
-    // Front
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-
     // Right
     1.0, 0.0, 0.0,
     1.0, 0.0, 0.0,
     1.0, 0.0, 0.0,
     1.0, 0.0, 0.0,
 
-    // Back
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
-
     // Left
     -1.0, 0.0, 0.0,
     -1.0, 0.0, 0.0,
     -1.0, 0.0, 0.0,
     -1.0, 0.0, 0.0,
-
     // Top
     0.0, 1.0, 0.0,
     0.0, 1.0, 0.0,
@@ -92,55 +79,66 @@ function obstacle(gl, track, z_dist) {
     0.0, -1.0, 0.0,
     0.0, -1.0, 0.0,
     0.0, -1.0, 0.0,
+    // Front
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+
+    // Back
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
+    0.0, 0.0, -1.0,
   ];
 
   const textureCoordinates = [
     // Front
-    0.0, 1.0,
-    0.0, 0.0,
+
     1.0, 0.0,
     1.0, 1.0,
-
+    0.0, 1.0,
+    0.0, 0.0,
     // Back
-    0.0, 1.0,
     0.0, 0.0,
     1.0, 0.0,
     1.0, 1.0,
-
+    0.0, 1.0,
     // Top
-    0.0, 1.0,
     0.0, 0.0,
     1.0, 0.0,
     1.0, 1.0,
-
+    0.0, 1.0,
     // Bottom
-    0.0, 1.0,
     0.0, 0.0,
     1.0, 0.0,
     1.0, 1.0,
-
+    0.0, 1.0,
     // Right
-    0.0, 1.0,
     0.0, 0.0,
     1.0, 0.0,
     1.0, 1.0,
-
+    0.0, 1.0,
     // Left
-    0.0, 1.0,
     0.0, 0.0,
     1.0, 0.0,
     1.0, 1.0,
-
+    0.0, 1.0,
   ];
 
   var r = getRandomInt(0, 1);
-
   var texture = 0;
+  var type = "";
+
   if (r == 0) {
-    texture = loadTexture(gl, 'assets/train.jpg');
+    texture = loadTexture(gl, 'assets/flyboost.jpg');
+    type = "flyboost";
   } else {
-    texture = loadTexture(gl, 'assets/container.jpg');
+    texture = loadTexture(gl, 'assets/jumpboost.png');
+    type = "jumpboost";
   }
+
+
   return {
     'indices': indices,
     'vertexCount': 36,
@@ -148,41 +146,46 @@ function obstacle(gl, track, z_dist) {
     'vertexNormals': vertexNormals,
     'textureCoordinates': textureCoordinates,
     'texture': texture,
-    'rotation': 0.00,
+    'rotation': 0,
     'translate': [track, -0.60, z_dist],
-    'initial_z': z_dist,
-    'type': "obstacle",
+    'type': type,
+    'speed_y': 0.1,
   }
-
 }
 
-function obstacle_delete(gl, object) {
+function boost_delete(gl, object) {
 
-  var dist = obstacles[obstacles.length - 1].translate[2] - 50;
+  var dist = -35.0;
   var r = getRandomInt(0, 2);
 
   let track = 0.0;
-  if (r == 0) {
+  if (r == 0)
+  {
     track = -1.05;
-  } else if (r == 1) {
+  }
+  else if(r == 1){
     track = 0.0;
-  } else if (r == 2) {
+  }
+  else if(r == 2){
     track = 1.05;
   }
 
-  obstacles.shift();
-  buffer_obstacles.shift();
-  obstacles.push(obstacle(gl, track, dist));
-  buffer_obstacles.push(initBuffers(gl, obstacles[obstacles.length - 1]));
+  boosts.shift();
+  buffer_boosts.shift();
+  boosts.push(boost(gl, track, dist));
+  buffer_boosts.push(initBuffers(gl, boosts[boosts.length - 1]));
 }
 
-function obstacle_tick(gl, obstacles) {
 
-  for (let i = 0; i < obstacles.length; ++i) {
-    obstacles[i].translate[2] += 0.075;
+function boost_tick(gl, boosts){
 
-    if (obstacles[i].translate[2] > 2) {
-      obstacle_delete(gl, obstacles[i]);
+  // console.log(boosts.length);
+  for(let i = 0; i <boosts.length; ++i){
+
+    boosts[i].translate[2] += 0.075;
+    boosts[i].rotation += 0.1;
+    if (boosts[i].translate[2] > 2) {
+      boost_delete(gl, boosts[i]);
     }
 
   }

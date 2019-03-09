@@ -1,42 +1,43 @@
 
-function ground(gl)
+
+function track(gl, side_x)
 {
   const positions = [
     // Front
-    -2.0, 0.05, 2.0,
-    -2.0, -0.05, 2.0,
-    2.0, -0.05, 2.0,
-    2.0, 0.05, 2.0,
+    -0.30, 0.001, 1.0,
+    -0.30, -0.001, 1.0,
+    0.30, -0.001, 1.0,
+    0.30, 0.001, 1.0,
 
     //Right
-    2.0, -0.05, 2.0,
-    2.0, 0.05, 2.0,
-    2.0, 0.05, -2.0,
-    2.0, -0.05, -2.0,
+    0.30, -0.001, 1.0,
+    0.30, 0.001, 1.0,
+    0.30, 0.001, -1.0,
+    0.30, -0.001, -1.0,
 
     //Back
-    2.0, 0.05, -2.0,
-    2.0, -0.05, -2.0,
-    -2.0, -0.05, -2.0,
-    -2.0, 0.05, -2.0,
+    0.30, 0.001, -1.0,
+    0.30, -0.001, -1.0,
+    -0.30, -0.001, -1.0,
+    -0.30, 0.001, -1.0,
 
     //Left
-    -2.0, -0.05, -2.0,
-    -2.0, 0.05, -2.0,
-    -2.0, 0.05, 2.0,
-    -2.0, -0.05, 2.0,
+    -0.30, -0.001, -1.0,
+    -0.30, 0.01, -1.0,
+    -0.30, 0.001, 1.0,
+    -0.30, -0.001, 1.0,
 
     //Top
-    -2.0, 0.05, 2.0,
-    2.0, 0.05, 2.0,
-    2.0, 0.05, -2.0,
-    -2.0, 0.05, -2.0,
+    -0.30, 0.001, 1.0,
+    0.30, 0.001, 1.0,
+    0.30, 0.001, -1.0,
+    -0.30, 0.001, -1.0,
 
     //Bottom
-    -2.0, -0.05, 2.0,
-    2.0, -0.05, 2.0,
-    2.0, -0.05, -2.0,
-    -2.0, -0.05, -2.0,
+    -0.30, -0.001, 1.0,
+    0.30, -0.001, 1.0,
+    0.30, -0.001, -1.0,
+    -0.30, -0.001, -1.0,
   ];
 
 
@@ -132,7 +133,7 @@ function ground(gl)
     0.0,  1.0,
   ];
 
-  const texture = loadTexture(gl, 'assets/ground.png');
+  const texture = loadTexture(gl, 'assets/track.jpeg');
 
   return {
 		'indices' : indices,
@@ -142,34 +143,49 @@ function ground(gl)
     'textureCoordinates' : textureCoordinates,
     'texture' : texture,
 		'rotation'  : 0.00,
-		'translate' : [0.0, -1.0, 0],
+		'translate' : [side_x, -0.9, -3.15],
     'type' : "mono",
 	}
 }
 
-function ground_delete(gl, index) {
+function track_delete(gl, index) {
 
   var dist = 0;
 
-  dist = objects[objects.length - 1].translate[2] - 4.0;
-  objects.splice(index, 1);
-  buffer_objects.splice(index, 1);
+  dist = tracks[tracks.length - 1].translate[2] - 2.0;
+  tracks.shift();
+  tracks.shift();
+  tracks.shift();
+  buffer_tracks.shift();
+  buffer_tracks.shift();
+  buffer_tracks.shift();
 
-  x = ground(gl);
+  x = track(gl, -1.05);
   x.translate[2] = dist;
+  tracks.push(x);
+  buffer_tracks.push(initBuffers(gl, x));
 
-  objects.push(x);
-  buffer_objects.push(initBuffers(gl, x));
+  x = track(gl, 0.0);
+  x.translate[2] = dist;
+  tracks.push(x);
+  buffer_tracks.push(initBuffers(gl, x));
+
+  x = track(gl, 1.05);
+  x.translate[2] = dist;
+  tracks.push(x);
+  buffer_tracks.push(initBuffers(gl, x));
 }
 
-function ground_tick(gl, objects){
+function track_tick(gl, tracks){
 
-  for (var i = 2; i < objects.length; ++i) {
+  for (var i = 0; i < 20; ++i) {
 
-    objects[i].translate[2] += 0.075;
+    tracks[3*i].translate[2] += 0.075;
+    tracks[3*i + 1].translate[2] += 0.075;
+    tracks[3*i + 2].translate[2] += 0.075;
 
-    if (objects[i].translate[2] > 0) {
-      ground_delete(gl, i);
+    if (tracks[3*i].translate[2] > 0) {
+      track_delete(gl, i);
       i--;
     }
   }

@@ -4,11 +4,24 @@
 <head>
   <meta charset="utf-8">
   <title>Subway Surfers</title>
-  <link rel="stylesheet" href="../webgl.css" type="text/css">
+  <style>
+    #glcanvas {
+      padding: 0;
+      margin: auto;
+      display: flex;
+      width: 1024px;
+      height: 800px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+  </style>
 </head>
 
 <body>
-  <canvas id="glcanvas" width="720" height="720"></canvas>
+  <canvas id="glcanvas" width="1024" height="800"></canvas>
 </body>
 
 <script src="./gl-matrix.js"></script>
@@ -17,9 +30,13 @@
 <script src="./utility.js"></script>
 <script src="./camera.js"></script>
 <script src="./texture.js"></script>
+<script src="./boost.js"></script>
 <script src="./obstacle.js"></script>
-<script src="./coins.js"></script>
+<script src="./barrier.js"></script>
+<script src="./coin.js"></script>
 <script src="./ground.js"></script>
+<script src="./track.js"></script>
+<script src="./police.js"></script>
 <script src="./player.js"></script>
 <script src="./wall.js"></script>
 <script src="./keyhandler.js"></script>

@@ -3,7 +3,7 @@ $(document).keydown(function(event){
 	var charCode = event.keyCode;
 	var charStr = String.fromCharCode(charCode);
 	statusKeys[charCode] = true;
-  console.log(charStr);
+  console.log(charStr,charCode);
 });
 
 /* The keyup event occurs when a keyboard key is released. */
