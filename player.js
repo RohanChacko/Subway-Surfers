@@ -218,7 +218,6 @@ function player_tick(object, obstacles) {
     object.jump = 0;
   }
 
-  console.log(object.jump);
   if (object.jump == -1) {
     object.speed_y += 0.008;
     object.translate[1] -= object.speed_y;

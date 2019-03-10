@@ -213,6 +213,4 @@ function boost_tick(gl, boosts, player) {
 
   }
 
-  console.log(player.flyboost);
-
 }

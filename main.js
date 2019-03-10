@@ -6,16 +6,21 @@ var num_walls = 30;
 var flash = false;
 var gray = false;
 var game_over = false;
+var game_start = false;
 var speed = 0.075;
 var speed_wall = 0.2;
+var then = 0;
+var flash_time = 0;
+var flash_then = 0;
+var toggle_1 = 0;
+var toggle_2 = 0;
+var finish = 0;
 
 main();
 
 function main() {
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-
-  // If we don't have a GL context, give up now
 
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
@@ -92,14 +97,8 @@ function main() {
   }
   `;
 
-  // Initialize a shader program; this is where all the lighting
-  // for the vertices and so forth is established.
   const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
-  // Collect all the info needed to use the shader program.
-  // Look up which attributes our shader program is using
-  // for aVertexPosition, aVevrtexColor and also
-  // look up uniform locations.
   const programInfo = {
     program: shaderProgram,
     attribLocations: {
@@ -113,6 +112,7 @@ function main() {
       normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
       gray: gl.getUniformLocation(shaderProgram, 'gray'),
       texture0: gl.getUniformLocation(shaderProgram, 'texture0'),
+      flash: gl.getUniformLocation(shaderProgram, 'flash'),
     },
   };
 
@@ -139,6 +139,8 @@ function main() {
   objects.push(police(gl));
 
   objects.push(ground(gl));
+  var finish_object = finishline(gl);
+  var buffer_finish_object = initBuffers(gl, finish_object);
 
   for (let i = 3; i < 15; ++i) {
     x = ground(gl);
@@ -191,31 +193,32 @@ function main() {
     buffer_walls_right.push(initBuffers(gl, walls_right[i]));
   }
 
-  var then = 0;
-  var flash_time = 0;
-  var flash_then = 0;
-
   // Draw the scene repeatedly
   function render(now) {
 
     now *= 0.001; // convert to seconds
     const deltaTime = now - then;
     then = now;
-    flash_then = now - flash_time;
-    if (statusKeys[70] == true) {
+    if (toggle_1 == 1)
+      flash_then = now - flash_time;
+    if (statusKeys[70] == true && toggle_1 == 0) {
+      flash_time = now;
+      toggle_1 = 1;
       flash = true;
-      flash_time = 0;
     }
 
     if (statusKeys[66] == true) {
       gray = !gray;
     }
 
-
+    update_score();
+    if (game_over || finish) {
+      Game_over();
+    }
     const projectionMatrix = clearScene(gl, objects[0].translate);
 
     var rand = getRandomInt(1, 200);
-    if (!game_over) {
+    if (!game_over && !finish && game_start) {
       if (rand % 13 == 0) {
 
         let r = getRandomInt(0, 2);
@@ -297,7 +300,7 @@ function main() {
       obstacle_tick(gl, obstacles, objects[0]);
       barrier_tick(gl, barriers, objects[0], objects[1]);
       coin_tick(gl, coins, objects[0]);
-      // console.log(objects[0].score);
+      console.log(objects[0].score);
       player_tick(objects[0], obstacles);
       police_tick(objects[1], objects[0]);
       ground_tick(gl, objects);
@@ -305,6 +308,11 @@ function main() {
       boost_tick(gl, boosts, objects[0]);
     }
 
+    if (objects[0].score >= 100) {
+      if (!finish && !game_over)
+        finishline_tick(finish_object, objects[0]);
+      drawScene(gl, programInfo, buffer_finish_object, deltaTime, projectionMatrix, finish_object, finish_object.texture);
+    }
     for (let i = 0; i < buffer_objects.length; i++) {
       drawScene(gl, programInfo, buffer_objects[i], deltaTime, projectionMatrix, objects[i], objects[i].texture);
     }
@@ -337,49 +345,37 @@ function main() {
       drawScene(gl, programInfo, buffer_boosts[i], deltaTime, projectionMatrix, boosts[i], boosts[i].texture);
     }
 
-    if (flash == 1) {
-      flash = false;
-    } else if (flash_then >= 3) {
-      flash = false;
-      flash_then = 0;
-    } else {
-      flash = true;
+    if (toggle_1 == 1 && toggle_2 == 0 && flash_then < 15) {
+      toggle_2 = 1;
+      setTimeout(function() {
+        if (toggle_1 == 1)
+          flash = !flash;
+        toggle_2 = 0;
+      }, 1000);
     }
+
+    if (flash_then >= 8) {
+      flash_then = 0;
+      flash = false;
+      toggle_1 = 0;
+    }
+
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
 }
 
-//
-// initBuffers
-//
-// Initialize the buffers we'll need. For this demo, we just
-// have one object -- a simple three-dimensional cube.
-//
 function initBuffers(gl, object) {
-
-  // Create a buffer for the cube's vertex positions.
 
   const positionBuffer = gl.createBuffer();
 
-  // Select the positionBuffer as the one to apply buffer
-  // operations to from here out.
-
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-  // Now pass the list of positions into WebGL to build the
-  // shape. We do this by creating a Float32Array from the
-  // JavaScript array, then use it to fill the current buffer.
-
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.positions), gl.STATIC_DRAW);
-
-  // Build the element array buffer; this specifies the indices
-  // into the vertex arrays for each face's vertices.
 
   const indexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-  // Now send the element array to GL
 
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array(object.indices), gl.STATIC_DRAW);
@@ -406,9 +402,6 @@ function initBuffers(gl, object) {
   };
 }
 
-//
-// Initialize a shader program, so WebGL knows how to draw our data
-//
 function initShaderProgram(gl, vsSource, fsSource) {
   const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
@@ -419,8 +412,6 @@ function initShaderProgram(gl, vsSource, fsSource) {
   gl.attachShader(shaderProgram, vertexShader);
   gl.attachShader(shaderProgram, fragmentShader);
   gl.linkProgram(shaderProgram);
-
-  // If creating the shader program failed, alert
 
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
     alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
@@ -444,8 +435,6 @@ function loadShader(gl, type, source) {
   // Compile the shader program
 
   gl.compileShader(shader);
-
-  // See if it compiled successfully
 
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));

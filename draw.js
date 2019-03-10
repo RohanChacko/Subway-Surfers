@@ -157,7 +157,7 @@ function drawScene(gl, programInfo, buffers, deltaTime, projectionMatrix, object
 
     // Tell the shader we bound the texture to texture unit 0
     gl.uniform1i(programInfo.uniformLocations.texture0, 0);
-
+    gl.uniform1i(programInfo.uniformLocations.flash, flash);
     gl.uniform1i(programInfo.uniformLocations.gray, gray);
 
   {
