@@ -135,16 +135,16 @@ function coin(gl, initial_x, initial_z) {
   const texture = loadTexture(gl, 'assets/coin.png');
 
   return {
-      'indices': indices,
-      'vertexCount': 36,
-      'positions': positions,
-      'vertexNormals' : vertexNormals,
-      'textureCoordinates' : textureCoordinates,
-      'texture' : texture,
-      'rotation': 0,
-      'translate': [initial_x, -0.75, initial_z],
-      'type': "coins",
-    }
+    'indices': indices,
+    'vertexCount': 36,
+    'positions': positions,
+    'vertexNormals': vertexNormals,
+    'textureCoordinates': textureCoordinates,
+    'texture': texture,
+    'rotation': 0,
+    'translate': [initial_x, -0.75, initial_z],
+    'type': "coins",
+  }
 
 
 }
@@ -155,32 +155,36 @@ function coin_delete(gl, object) {
   var r = getRandomInt(0, 2);
 
   let track = 0.0;
-  if (r == 0)
-  {
+  if (r == 0) {
     track = -1.05;
-  }
-  else if(r == 1){
+  } else if (r == 1) {
     track = 0.0;
-  }
-  else if(r == 2){
+  } else if (r == 2) {
     track = 1.05;
   }
 
-  coins[index] = coin(gl, track,  -20);
+  coins[index] = coin(gl, track, -20);
   buffer_coins[index] = initBuffers(gl, coins[index]);
 
 }
 
 
-function coin_tick(gl, coins){
+function coin_tick(gl, coins, player) {
 
   // console.log(coins.length);
-  for(let i = 0; i <coins.length; ++i){
+  for (let i = 0; i < coins.length; ++i) {
 
-    coins[i].translate[2] += 0.075;
+    coins[i].translate[2] += speed;
     coins[i].rotation -= 0.1;
-    if (coins[i].translate[2] > 2) {
+
+    if (player.translate[0] == coins[i].translate[0] && player.translate[2] - 0.15 <= coins[i].translate[2] && player.translate[2] + 0.15 >= coins[i].translate[2] && player.translate[1] == -0.70) {
+      player.score +=1;
       coin_delete(gl, coins[i]);
+      i--;
+    }
+    else if (coins[i].translate[2] > 2) {
+      coin_delete(gl, coins[i]);
+      i--;
     }
 
   }

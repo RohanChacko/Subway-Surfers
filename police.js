@@ -137,6 +137,7 @@ function police(gl) {
     'translate': [0.0, -0.70, -2.15],
     'type': "police",
     'speed_y': 0.1,
+    'setback': false,
   }
 }
 
@@ -145,7 +146,16 @@ function police_tick(object, player) {
 
   object.translate[0] = player.translate[0];
 
-  if (object.translate[2] <= 2.0) {
+  if (object.setback == false) {
     object.translate[2] += 0.005;
+  }
+
+  if(object.setback == true){
+    object.translate[2] -= 0.005;
+
+    if (player.translate[0] == object.translate[0] && !(player.translate[2] - 0.15 >= object.translate[2] + 0.15 || player.translate[2] + 0.15 <= object.translate[2] - 0.15)) {
+      game_over = true;
+      console.log("###GAME OVER###");
+    }
   }
 }

@@ -138,6 +138,9 @@ function player(gl) {
     'jump': 0,
     'score': 0,
     'speed_y': 0.1,
+    'jumpboost': false,
+    'flyboost': false,
+    'jumpheight': -0.15,
   }
 }
 
@@ -192,24 +195,30 @@ function player_tick(object, obstacles) {
     }
     object.translate[1] += object.speed_y;
 
-
+    if (object.translate[1] > object.jumpheight){
+      object.translate[1] = object.jumpheight;
+    }
   }
 
   for (let i = 0; i < obstacles.length; ++i) {
 
-
     if (obstacles[i].translate[0] == object.translate[0] && obstacles[i].translate[2] + 1.55 > -3.15 && obstacles[i].translate[2] - 1.55 < -3.15) {
-      if (object.translate[1] < 0.05 && object.jump == 1) {
+      if (object.translate[1] < object.jumpheight && object.jump == 1) {
         object.jump = 1;
       } else {
         object.jump = 0;
       }
       break;
-    } else if (object.translate[1] > 0.05) {
+    } else if (object.translate[1] == object.jumpheight) {
       object.jump = -1;
     }
   }
 
+  if(object.translate[1] == object.jumpheight && object.flyboost == true){
+    object.jump = 0;
+  }
+
+  console.log(object.jump);
   if (object.jump == -1) {
     object.speed_y += 0.008;
     object.translate[1] -= object.speed_y;

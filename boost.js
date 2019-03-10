@@ -126,16 +126,16 @@ function boost(gl, track, z_dist) {
     0.0, 1.0,
   ];
 
-  var r = getRandomInt(0, 1);
-  var texture = 0;
-  var type = "";
+  let s = getRandomInt(0, 1);
+  let texture = 0;
+  let type = "";
 
-  if (r == 0) {
+  if (s == 0) {
     texture = loadTexture(gl, 'assets/flyboost.jpg');
-    type = "flyboost";
-  } else {
+    type = "fly";
+  } else if(s == 1){
     texture = loadTexture(gl, 'assets/jumpboost.png');
-    type = "jumpboost";
+    type = "jump";
   }
 
 
@@ -155,18 +155,15 @@ function boost(gl, track, z_dist) {
 
 function boost_delete(gl, object) {
 
-  var dist = -35.0;
-  var r = getRandomInt(0, 2);
+  let dist = -35.0;
+  let r = getRandomInt(0, 2);
 
   let track = 0.0;
-  if (r == 0)
-  {
+  if (r == 0) {
     track = -1.05;
-  }
-  else if(r == 1){
+  } else if (r == 1) {
     track = 0.0;
-  }
-  else if(r == 2){
+  } else if (r == 2) {
     track = 1.05;
   }
 
@@ -177,17 +174,45 @@ function boost_delete(gl, object) {
 }
 
 
-function boost_tick(gl, boosts){
+function boost_tick(gl, boosts, player) {
 
   // console.log(boosts.length);
-  for(let i = 0; i <boosts.length; ++i){
+  for (let i = 0; i < boosts.length; ++i) {
 
-    boosts[i].translate[2] += 0.075;
+    boosts[i].translate[2] += speed;
     boosts[i].rotation += 0.1;
-    if (boosts[i].translate[2] > 2) {
+
+    if (player.translate[0] == boosts[i].translate[0] && player.translate[2] - 0.15 <= boosts[i].translate[2] && player.translate[2] + 0.15 >= boosts[i].translate[2] && player.translate[1] == -0.70) {
+
+      if (boosts[i].type == "jump") {
+        player.jumpheight = 0.05;
+        player.jumpboost = true;
+        setTimeout(function() {
+          player.jumpheight = -0.15;
+          player.jumpboost = false;
+        }, 5000);
+      }
+      else if(boosts[i].type == "fly"){
+
+        player.jump = 1;
+        player.jumpheight = 0.05;
+        player.flyboost = true;
+
+        setTimeout(function() {
+          player.jump = -1;
+          player.flyboost = false;
+        }, 10000);
+      }
+
       boost_delete(gl, boosts[i]);
+      i--;
+    } else if (boosts[i].translate[2] > 2) {
+      boost_delete(gl, boosts[i]);
+      i--;
     }
 
   }
+
+  console.log(player.flyboost);
 
 }

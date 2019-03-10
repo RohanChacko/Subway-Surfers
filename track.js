@@ -180,9 +180,9 @@ function track_tick(gl, tracks){
 
   for (var i = 0; i < 20; ++i) {
 
-    tracks[3*i].translate[2] += 0.075;
-    tracks[3*i + 1].translate[2] += 0.075;
-    tracks[3*i + 2].translate[2] += 0.075;
+    tracks[3*i].translate[2] += speed;
+    tracks[3*i + 1].translate[2] += speed;
+    tracks[3*i + 2].translate[2] += speed;
 
     if (tracks[3*i].translate[2] > 0) {
       track_delete(gl, i);

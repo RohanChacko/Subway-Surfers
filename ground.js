@@ -166,7 +166,7 @@ function ground_tick(gl, objects){
 
   for (var i = 2; i < objects.length; ++i) {
 
-    objects[i].translate[2] += 0.075;
+    objects[i].translate[2] += speed;
 
     if (objects[i].translate[2] > 0) {
       ground_delete(gl, i);

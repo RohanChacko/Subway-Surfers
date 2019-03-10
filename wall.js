@@ -171,7 +171,7 @@ function wall_tick(gl, walls_left, walls_right) {
 
   for (var i = 0; i < walls_left.length; ++i) {
 
-    walls_left[i].translate[2] += 0.2;
+    walls_left[i].translate[2] += speed_wall;
 
     if (walls_left[i].translate[2] > -4) {
       wall_delete(gl, walls_left[i]);
@@ -181,7 +181,7 @@ function wall_tick(gl, walls_left, walls_right) {
 
   for (var i = 0; i < walls_right.length; ++i) {
 
-    walls_right[i].translate[2] += 0.2;
+    walls_right[i].translate[2] += speed_wall;
 
     if (walls_right[i].translate[2] > -4) {
       wall_delete(gl, walls_right[i]);

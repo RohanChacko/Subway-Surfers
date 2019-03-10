@@ -5,6 +5,9 @@ var cameraAngleDegVert = 0;
 var num_walls = 30;
 var flash = false;
 var gray = false;
+var game_over = false;
+var speed = 0.075;
+var speed_wall = 0.2;
 
 main();
 
@@ -149,25 +152,25 @@ function main() {
 
   for (let i = 1; i < 20; ++i) {
     x = track(gl, -1.05);
-    x.translate[2] = tracks[3*i - 1].translate[2] - 2.00;
+    x.translate[2] = tracks[3 * i - 1].translate[2] - 2.00;
     tracks.push(x);
 
     x = track(gl, 0.0);
-    x.translate[2] = tracks[3*i - 1].translate[2] - 2.0;
+    x.translate[2] = tracks[3 * i - 1].translate[2] - 2.0;
     tracks.push(x);
 
     x = track(gl, 1.05);
-    x.translate[2] = tracks[3*i - 1].translate[2] - 2.0;
+    x.translate[2] = tracks[3 * i - 1].translate[2] - 2.0;
     tracks.push(x);
   }
 
   walls_left.push(wall(gl, -15, getRandomFloat(0.2, 0.8), -1));
-  for (let i = 1; i < num_walls/2; ++i) {
-      walls_left.push(wall(gl, walls_left[i - 1].initial_z - 14, getRandomFloat(0.2, 0.8), -1));
+  for (let i = 1; i < num_walls / 2; ++i) {
+    walls_left.push(wall(gl, walls_left[i - 1].initial_z - 14, getRandomFloat(0.2, 0.8), -1));
   }
 
   walls_right.push(wall(gl, -15, getRandomFloat(0.2, 0.8), 1));
-  for (let i = 1; i < num_walls/2; ++i) {
+  for (let i = 1; i < num_walls / 2; ++i) {
     walls_right.push(wall(gl, walls_right[i - 1].initial_z - 14, getRandomFloat(0.2, 0.8), 1));
   }
 
@@ -212,96 +215,95 @@ function main() {
     const projectionMatrix = clearScene(gl, objects[0].translate);
 
     var rand = getRandomInt(1, 200);
+    if (!game_over) {
+      if (rand % 13 == 0) {
 
-    if (rand % 13 == 0) {
+        let r = getRandomInt(0, 2);
+        let track = 0.0;
+        if (r == 0) {
+          track = -1.05;
+        } else if (r == 1) {
+          track = 0.0;
+        } else if (r == 2) {
+          track = 1.05;
+        }
+        if (coins.length == 0) {
+          coins.push(coin(gl, track, -10));
+          buffer_coins.push(initBuffers(gl, coins[0]));
+        } else if (coins.length < 45) {
+          coins.push(coin(gl, track, coins[coins.length - 1].translate[2] - 2));
+          buffer_coins.push(initBuffers(gl, coins[coins.length - 1]));
+        }
+      }
 
-      let r = getRandomInt(0, 2);
-      let track = 0.0;
-      if (r == 0) {
-        track = -1.05;
-      } else if (r == 1) {
-        track = 0.0;
-      } else if (r == 2) {
-        track = 1.05;
+      if (rand % 17 == 0) {
+
+        let x = getRandomInt(0, 2);
+        let track = 0.0;
+        if (x == 0) {
+          track = -1.05;
+        } else if (x == 1) {
+          track = 0.0;
+        } else if (x == 2) {
+          track = 1.05;
+        }
+        if (obstacles.length == 0) {
+          obstacles.push(obstacle(gl, track, -10));
+          buffer_obstacles.push(initBuffers(gl, obstacles[0]));
+        } else if (obstacles.length < 5) {
+          obstacles.push(obstacle(gl, track, obstacles[obstacles.length - 1].translate[2] - 50));
+          buffer_obstacles.push(initBuffers(gl, obstacles[obstacles.length - 1]));
+        }
       }
-      if (coins.length == 0) {
-        coins.push(coin(gl, track, -10));
-        buffer_coins.push(initBuffers(gl, coins[0]));
-      } else if (coins.length < 45) {
-        coins.push(coin(gl, track, coins[coins.length - 1].translate[2] - 2));
-        buffer_coins.push(initBuffers(gl, coins[coins.length - 1]));
+
+      if (rand % 19 == 0) {
+
+        let x = getRandomInt(0, 2);
+        let track = 0.0;
+        if (x == 0) {
+          track = -1.05;
+        } else if (x == 1) {
+          track = 0.0;
+        } else if (x == 2) {
+          track = 1.05;
+        }
+        if (barriers.length == 0) {
+          barriers.push(barrier(gl, track, -35));
+          buffer_barriers.push(initBuffers(gl, barriers[0]));
+        } else if (barriers.length < 5) {
+          barriers.push(barrier(gl, track, barriers[barriers.length - 1].translate[2] - 7));
+          buffer_barriers.push(initBuffers(gl, barriers[barriers.length - 1]));
+        }
       }
+
+      if (rand % 23 == 0) {
+
+        let x = getRandomInt(0, 2);
+        let track = 0.0;
+        if (x == 0) {
+          track = -1.05;
+        } else if (x == 1) {
+          track = 0.0;
+        } else if (x == 2) {
+          track = 1.05;
+        }
+        if (boosts.length < 2) {
+          boosts.push(boost(gl, track, -35));
+          buffer_boosts.push(initBuffers(gl, boosts[boosts.length - 1]));
+        }
+      }
+
+      wall_tick(gl, walls_left, walls_right);
+      obstacle_tick(gl, obstacles, objects[0]);
+      barrier_tick(gl, barriers, objects[0], objects[1]);
+      coin_tick(gl, coins, objects[0]);
+      // console.log(objects[0].score);
+      player_tick(objects[0], obstacles);
+      police_tick(objects[1], objects[0]);
+      ground_tick(gl, objects);
+      track_tick(gl, tracks);
+      boost_tick(gl, boosts, objects[0]);
     }
-
-    if (rand % 17 == 0) {
-
-      let x = getRandomInt(0, 2);
-      let track = 0.0;
-      if (x == 0) {
-        track = -1.05;
-      } else if (x == 1) {
-        track = 0.0;
-      } else if (x == 2) {
-        track = 1.05;
-      }
-      if (obstacles.length == 0) {
-        obstacles.push(obstacle(gl, track, -10));
-        buffer_obstacles.push(initBuffers(gl, obstacles[0]));
-      } else if (obstacles.length < 5) {
-        obstacles.push(obstacle(gl, track, obstacles[obstacles.length - 1].translate[2] - 50));
-        buffer_obstacles.push(initBuffers(gl, obstacles[obstacles.length - 1]));
-      }
-    }
-
-    if (rand % 19 == 0) {
-
-      let x = getRandomInt(0, 2);
-      let track = 0.0;
-      if (x == 0) {
-        track = -1.05;
-      } else if (x == 1) {
-        track = 0.0;
-      } else if (x == 2) {
-        track = 1.05;
-      }
-      if (barriers.length == 0) {
-        barriers.push(barrier(gl, track, -35));
-        buffer_barriers.push(initBuffers(gl, barriers[0]));
-      } else if (barriers.length < 5) {
-        barriers.push(barrier(gl, track, barriers[barriers.length - 1].translate[2] - 7));
-        buffer_barriers.push(initBuffers(gl, barriers[barriers.length - 1]));
-      }
-    }
-
-    if (rand % 23 == 0) {
-
-      let x = getRandomInt(0, 2);
-      let track = 0.0;
-      if (x == 0) {
-        track = -1.05;
-      } else if (x == 1) {
-        track = 0.0;
-      } else if (x == 2) {
-        track = 1.05;
-      }
-      if (boosts.length == 0) {
-        boosts.push(boost(gl, track, -35));
-        buffer_boosts.push(initBuffers(gl, boosts[0]));
-      } else if (boosts.length < 2) {
-        boosts.push(boost(gl, track, -35));
-        buffer_boosts.push(initBuffers(gl, boosts[boosts.length - 1]));
-      }
-    }
-
-    wall_tick(gl, walls_left, walls_right);
-    obstacle_tick(gl, obstacles);
-    coin_tick(gl, coins);
-    player_tick(objects[0], obstacles);
-    police_tick(objects[1], objects[0]);
-    ground_tick(gl, objects);
-    track_tick(gl, tracks);
-    barrier_tick(gl, barriers);
-    boost_tick(gl, boosts);
 
     for (let i = 0; i < buffer_objects.length; i++) {
       drawScene(gl, programInfo, buffer_objects[i], deltaTime, projectionMatrix, objects[i], objects[i].texture);
